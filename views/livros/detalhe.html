@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}{{ livro.titulo }} – Livraria{% endblock %}
+{% block conteudo %}
+  <p><a href="{{ url_for('livros.buscar') }}">Voltar para a busca</a></p>
+  <h1>{{ livro.titulo }}</h1>
+  <p class="suave">{{ livro.autor }}</p>
+  <p class="preco grande">{{ livro.preco_formatado }} <span class="suave">em todas as lojas</span></p>
+
+  <h2>Disponibilidade</h2>
+  <ul class="lista">
+    {% for item in lojas %}
+      <li class="cartao">
+        <div class="linha">
+          <a href="{{ url_for('lojas.detalhe', loja_id=item.loja.id) }}">{{ item.loja.nome }}</a>
+          {% if item.disponivel %}
+            <span class="sim">{{ item.quantidade }} em estoque</span>
+          {% else %}
+            <span class="nao">Esgotado</span>
+          {% endif %}
+        </div>
+        <p class="suave">{{ item.loja.endereco }}</p>
+        {% if item.favorita %}
+          <p class="fav">Sua loja favorita</p>
+        {% else %}
+          <form method="post" action="{{ url_for('lojas.favoritar', loja_id=item.loja.id) }}">
+            <input type="hidden" name="voltar" value="{{ request.path }}">
+            <button class="secundario">Definir como favorita</button>
+          </form>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
